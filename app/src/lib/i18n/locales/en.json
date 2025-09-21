@@ -1,0 +1,42 @@
+{
+  "errors": {},
+  "controls": {
+    "language": {
+      "title": "Language",
+      "toggle": "Switch Language"
+    },
+    "theme": {
+      "title": "Theme",
+      "toggle": "Switch between light and dark theme",
+      "dark": "Dark",
+      "light": "Light"
+    }
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About me",
+    "experience": "Experience",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "footer": {
+    "text": "Made with ❤️ by Martin Kollár"
+  },
+  "options": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "more_info": "More info"
+  },
+  "task": {
+    "options": {
+      "create": "Create task",
+      "edit": "Edit task",
+      "delete": "Delete task"
+    }
+  }
+}

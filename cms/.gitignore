@@ -1,0 +1,19 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Backup files # 
+*.bak 
+
+# Environments 
+.env 
+env/ 
+ENV/ 
+
+# mypy
+.mypy_cache/
+mypy.ini

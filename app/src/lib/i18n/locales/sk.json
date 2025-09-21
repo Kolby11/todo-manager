@@ -1,0 +1,42 @@
+{
+  "errors": {},
+  "controls": {
+    "language": {
+      "title": "Jazyk",
+      "toggle": "Prepnúť jazyk"
+    },
+    "theme": {
+      "title": "Téma",
+      "toggle": "Prepnúť medzi svetlým a tmavým režimom",
+      "dark": "Tmavý",
+      "light": "Svetlý"
+    }
+  },
+  "navbar": {
+    "home": "Domov",
+    "about": "O mne",
+    "experience": "Skúsenosti",
+    "projects": "Projekty",
+    "contact": "Kontakt"
+  },
+  "footer": {
+    "text": "Vytvoril so ❤️ Martin Kollár"
+  },
+  "options": {
+    "edit": "Upraviť",
+    "delete": "Odstrániť",
+    "create": "Vytvoriť",
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "close": "Zavrieť",
+    "confirm": "Potvrdiť",
+    "more_info": "Viac informácií"
+  },
+  "task": {
+    "options": {
+      "create": "Vytvoriť úlohu",
+      "edit": "Upraviť úlohu",
+      "delete": "Odstrániť úlohu"
+    }
+  }
+}
