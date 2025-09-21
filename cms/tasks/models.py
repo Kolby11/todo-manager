@@ -2,6 +2,12 @@
 
 from django.db import models
 
+TASK_STATUS_CHOICES = {
+    "TODO": "To Do",
+    "IN_PROGRESS": "In Progress",
+    "DONE": "Done"
+}
+
 
 class Task(models.Model):
     """
@@ -17,6 +23,7 @@ class Task(models.Model):
     title: str = models.CharField(max_length=100)
     description: str = models.TextField(blank=True, max_length=500)
     due_date: models.DateField = models.DateField(blank=True, null=True)
+    status: str = models.CharField(max_length=20, choices=TASK_STATUS_CHOICES, default="TODO")
     photo: models.ImageField = models.ImageField(
         blank=True, null=True, upload_to="images/"
     )
