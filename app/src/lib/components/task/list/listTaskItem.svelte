@@ -1,14 +1,16 @@
 <script lang="ts">
-	import * as Dialog from '../ui/dialog';
+	import ListTaskItem from './listTaskItem.svelte';
+	import * as Dialog from '../../ui/dialog';
 	import type { Task } from '$lib/types/task';
 	import { Trash as TrashIcon, Pencil as PencilIcon } from '@lucide/svelte';
-	import { buttonVariants } from '../ui/button';
+	import { buttonVariants } from '../../ui/button';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	type TaskProps = {
+	type ListTaskItemProps = {
 		task: Task;
-	};
+	} & HTMLAttributes<HTMLDivElement>;
 
-	let { task }: TaskProps = $props();
+	let { task, ...rest }: ListTaskItemProps = $props();
 
 	let formattedDate = $derived(
 		task.due_date
@@ -23,7 +25,7 @@
 	);
 </script>
 
-<div class="gap-2 rounded-md border-2 p-2">
+<div class="gap-2 rounded-md border-2 p-2" {...rest}>
 	<div class="flex justify-between">
 		<h3 class="text-lg font-semibold">
 			{task.title}

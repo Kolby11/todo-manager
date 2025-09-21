@@ -1,120 +1,105 @@
 <script lang="ts">
-	// This is done in a single file for clarity. A more factored version here: https://svelte.dev/repl/288f827275db4054b23c437a572234f6?version=3.38.2
 	import { flip } from 'svelte/animate';
 	import { dndzone } from 'svelte-dnd-action';
-	import Task from '$lib/components/global/task.svelte';
-	import type { Task as TaskType } from '$lib/types/task';
+	import { TaskStatus, type Task as TaskType } from '$lib/types/task';
+	import KanbanTaskItem from './kanbanTaskItem.svelte';
+	import { t } from 'svelte-i18n';
+	import { createEventDispatcher } from 'svelte';
 
-	type ListContainerProps = {
+	type KanbanTaskDashboardProps = {
 		tasks: TaskType[];
 	};
 
-	let { tasks }: ListContainerProps = $props();
+	let { tasks }: KanbanTaskDashboardProps = $props();
+	
+	const dispatch = createEventDispatcher<{
+		tasksUpdated: TaskType[];
+	}>();
 
-	// let columns = $derived.by(()=>{
-	// 	const cols = [
-	// 		{ id: 'todo', name: 'To Do', items: [] },
-	// 		{ id: 'inprogress', name: 'In Progress', items: [] },
-	// 		{ id: 'done', name: 'Done', items: [] }
-	// 	];
-	// 	for (const task of tasks) {
-	// 		if (task.status === 'todo') {
-	// 			cols[0].items.push(task);
-	// 		} else if (task.status === 'inprogress') {
-	// 			cols[1].items.push(task);
-	// 		} else if (task.status === 'done') {
-	// 			cols[2].items.push(task);
-	// 		}
-	// 	}
-	// 	return cols;
-	// })
+	let columns: { id: string; name: string; items: TaskType[] }[] = $derived.by(() => {
+		const cols = [
+			{ id: 'todo', name: $t('task.status.todo', { default: 'To Do' }), items: [] as TaskType[] },
+			{ id: 'inprogress', name: $t('task.status.inprogress', { default: 'In Progress' }), items: [] as TaskType[] },
+			{ id: 'done', name: $t('task.status.done', { default: 'Done' }), items: [] as TaskType[] }
+		];
+		
+		for (const task of tasks) {
+			switch (task.status) {
+				case TaskStatus.TODO:
+					cols[0].items.push(task);
+					break;
+				case TaskStatus.IN_PROGRESS:
+					cols[1].items.push(task);
+					break;
+				case TaskStatus.DONE:
+					cols[2].items.push(task);
+					break;
+			}
+		}
+		return cols;
+	});
 
 	const flipDurationMs = 200;
-	function handleDndConsiderColumns(e) {
-		tasks = e.detail.items;
+
+	function handleDndConsiderItems(cid: string, e: CustomEvent<{ items: TaskType[] }>) {
+		const colIdx = columns.findIndex((c) => c.id === cid);
+		if (colIdx !== -1) {
+			// Create a new columns array to trigger reactivity
+			const newColumns = [...columns];
+			newColumns[colIdx] = { ...newColumns[colIdx], items: e.detail.items };
+			columns = newColumns;
+		}
 	}
-	function handleDndFinalizeColumns(e) {
-		tasks = e.detail.items;
-	}
-	function handleDndConsiderCards(cid, e) {
-		const colIdx = tasks.findIndex((c) => c.id === cid);
-		tasks[colIdx].items = e.detail.items;
-		tasks = [...tasks];
-	}
-	function handleDndFinalizeCards(cid, e) {
-		const colIdx = tasks.findIndex((c) => c.id === cid);
-		tasks[colIdx].items = e.detail.items;
-		tasks = [...tasks];
-	}
-	function handleClick(e) {
-		alert('dragabble elements are still clickable :)');
+
+	function handleDndFinalizeItems(cid: string, e: CustomEvent<{ items: TaskType[] }>) {
+		const colIdx = columns.findIndex((c) => c.id === cid);
+		if (colIdx !== -1) {
+			// Update the column with new items
+			const newColumns = [...columns];
+			newColumns[colIdx] = { ...newColumns[colIdx], items: e.detail.items };
+			columns = newColumns;
+			
+			// Update task statuses based on their new columns and create updated tasks array
+			const updatedTasks = columns.flatMap(col => 
+				col.items.map(task => ({
+					...task,
+					status: col.id === 'todo' ? TaskStatus.TODO :
+						col.id === 'inprogress' ? TaskStatus.IN_PROGRESS :
+						TaskStatus.DONE
+				}))
+			);
+			
+			// Dispatch the updated tasks to parent component
+			dispatch('tasksUpdated', updatedTasks);
+		}
 	}
 </script>
 
-<section
-	class="board"
-	use:dndzone={{ items: tasks, flipDurationMs, type: 'columns' }}
-	onconsider={handleDndConsiderColumns}
-	onfinalize={handleDndFinalizeColumns}
->
-	{#each tasks as column (column.id)}
-		<div class="column" animate:flip={{ duration: flipDurationMs }}>
-			<div class="column-title">{column.name}</div>
+<section class="h-full w-full mb-10 flex gap-2">
+	{#each columns as column (column.id)}
+		<div class="h-full grow border rounded-md overflow-y-hidden flex flex-col">
+			<div class="justify-center items-center py-2 flex border-b">
+				<p class="text-lg font-medium">{column.name}</p>
+			</div>
 			<div
-				class="column-content"
-				use:dndzone={{ items: column.items, flipDurationMs }}
-				onconsider={(e) => handleDndConsiderCards(column.id, e)}
-				onfinalize={(e) => handleDndFinalizeCards(column.id, e)}
+				class="flex-1 overflow-y-auto flex flex-col gap-2 p-2"
+				use:dndzone={{ 
+					items: column.items, 
+					flipDurationMs,
+					dropTargetStyle: {},
+					transformDraggedElement: (element) => {
+						element && (element.style.opacity = '0.8');
+					}
+				}}
+				onconsider={(e) => handleDndConsiderItems(column.id, e)}
+				onfinalize={(e) => handleDndFinalizeItems(column.id, e)}
 			>
-				{#each tasks as task (task.id)}
-					<Task
-						{task}
-						class="card"
-						animate:flip={{ duration: flipDurationMs }}
-						onclick={handleClick}
-					/>
+				{#each column.items as task (task.id)}
+					<div animate:flip={{ duration: flipDurationMs }}>
+						<KanbanTaskItem {task} />
+					</div>
 				{/each}
 			</div>
 		</div>
 	{/each}
 </section>
-
-<style>
-	.board {
-		height: 90vh;
-		width: 100%;
-		padding: 0.5em;
-		margin-bottom: 40px;
-	}
-	.column {
-		height: 100%;
-		width: 250px;
-		padding: 0.5em;
-		margin: 1em;
-		float: left;
-		border: 1px solid #333333;
-		/*Notice we make sure this container doesn't scroll so that the title stays on top and the dndzone inside is scrollable*/
-		overflow-y: hidden;
-	}
-	.column-content {
-		height: 100%;
-		/* Notice that the scroll container needs to be the dndzone if you want dragging near the edge to trigger scrolling */
-		overflow-y: scroll;
-	}
-	.column-title {
-		margin-bottom: 1em;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.card {
-		height: 15%;
-		width: 100%;
-		margin: 0.4em 0;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: #dddddd;
-		border: 1px solid #333333;
-	}
-</style>

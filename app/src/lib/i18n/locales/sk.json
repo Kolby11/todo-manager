@@ -33,6 +33,11 @@
     "more_info": "Viac informácií"
   },
   "task": {
+    "status": {
+      "todo": "Na spracovanie",
+      "inprogress": "Prebieha",
+      "done": "Dokončené"
+    },
     "options": {
       "create": "Vytvoriť úlohu",
       "edit": "Upraviť úlohu",

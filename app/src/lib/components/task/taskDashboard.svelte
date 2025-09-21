@@ -7,6 +7,7 @@
 	import CreateTaskFormDialog from './form/createTaskFormDialog.svelte';
 	import { t } from 'svelte-i18n';
 	import { getTaskStore } from '$lib/stores/taskStore.svelte';
+	import KanbanTaskDashboard from './kanban/kanbanTaskDashboard.svelte';
 
 	let activeDashboardType: 'list' | 'kanban' = $state('list');
 
@@ -30,9 +31,9 @@
 		</CreateTaskFormDialog>
 	</div>
 	<!-- Dashboard Content -->
-	<div class="mt-2 rounded-lg border-2 p-2">
+	<div class="mt-2 rounded-lg border-2 p-2 h-[80vh] overflow-y-auto">
 		{#if activeDashboardType === 'kanban'}
-			<p>Kanban view is under construction.</p>
+			<KanbanTaskDashboard tasks={taskStore.tasks} />
 		{:else}
 			<ListContainer tasks={taskStore.tasks} />
 		{/if}

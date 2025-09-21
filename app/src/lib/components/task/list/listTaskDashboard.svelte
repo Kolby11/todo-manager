@@ -1,20 +1,20 @@
 <script lang="ts">
-	import Task from '$lib/components/global/task.svelte';
+	import ListTaskItem from '$lib/components/task/list/listTaskItem.svelte';
 	import type { Task as TaskType } from '$lib/types/task';
 	import EditTaskFormDialog from '../form/editTaskFormDialog.svelte';
 
-	type ListContainerProps = {
+	type ListTaskDashboardProps = {
 		tasks: TaskType[];
 	};
 
-	let { tasks }: ListContainerProps = $props();
+	let { tasks }: ListTaskDashboardProps = $props();
 </script>
 
 <EditTaskFormDialog data={{ form: { name: '', email: '' } }}>
-	<ul class="flex flex-col gap-y-2">
+	<ul class="flex flex-col gap-y-2 h-full">
 		{#each tasks as task (task.id)}
 			<li>
-				<Task {task} />
+				<ListTaskItem {task} />
 			</li>
 		{/each}
 	</ul>
