@@ -3,9 +3,17 @@
 	import * as Dialog from '$lib/components/ui/alert-dialog/index.js';
 	import TaskForm from './taskForm.svelte';
 	import { t } from 'svelte-i18n';
-	
-	let { data, children } = $props();
-	
+	import type { Task } from '$lib/types/task';
+	import type { Snippet } from 'svelte';
+
+	type TaskActionDialogProps = {
+        task?: Task;
+        action: 'create' | 'edit' | 'delete';
+        children: Snippet;
+    };
+
+	let { task, action=$bindable(), children }: TaskActionDialogProps = $props();
+
 	let open = $state(false);
 
 	let submitTaskForm: (() => void) | undefined = $state();
@@ -24,16 +32,19 @@
 <Dialog.Root bind:open>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{$t('task.actions.create')}</Dialog.Title>
+			<Dialog.Title>{$t(`task.actions.${action}.title`)}</Dialog.Title>
 		</Dialog.Header>
 		
-		<!-- Bind to the exposed function -->
-		<TaskForm {data} bind:submitForm={submitTaskForm} bind:onSubmit={closeDialog} />
-		
+        {#if action !== 'delete'}
+            <TaskForm data={task} bind:submitForm={submitTaskForm} bind:onSubmit={closeDialog} />
+        {:else}
+            <p class="text-center">{$t('task.actions.delete.warning')}</p>
+		{/if}
+
 		<Dialog.Footer>
 			<Dialog.Cancel>{$t('actions.cancel')}</Dialog.Cancel>
 			<Dialog.Action onclick={handleCreateClick}>
-				{$t('actions.create')}
+				{$t(`actions.${action}`)}
 			</Dialog.Action>
 		</Dialog.Footer>
 	</Dialog.Content>

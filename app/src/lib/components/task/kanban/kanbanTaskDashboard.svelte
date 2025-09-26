@@ -1,26 +1,21 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
 	import { dndzone } from 'svelte-dnd-action';
-	import { TaskStatus, type Task as TaskType } from '$lib/types/task';
+	import { TaskStatus, type Task as Task } from '$lib/types/task';
 	import KanbanTaskItem from './kanbanTaskItem.svelte';
 	import { t } from 'svelte-i18n';
-	import { createEventDispatcher } from 'svelte';
 
 	type KanbanTaskDashboardProps = {
-		tasks: TaskType[];
+		tasks: Task[];
 	};
 
-	let { tasks }: KanbanTaskDashboardProps = $props();
-	
-	const dispatch = createEventDispatcher<{
-		tasksUpdated: TaskType[];
-	}>();
+	let { tasks = [] }: KanbanTaskDashboardProps = $props();
 
-	let columns: { id: string; name: string; items: TaskType[] }[] = $derived.by(() => {
+	let columns: { id: string; name: string; items: Task[] }[] = $derived.by(() => {
 		const cols = [
-			{ id: 'todo', name: $t('task.status.todo', { default: 'To Do' }), items: [] as TaskType[] },
-			{ id: 'inprogress', name: $t('task.status.inprogress', { default: 'In Progress' }), items: [] as TaskType[] },
-			{ id: 'done', name: $t('task.status.done', { default: 'Done' }), items: [] as TaskType[] }
+			{ id: 'todo', name: $t('task.status.todo', { default: 'To Do' }), items: [] as Task[] },
+			{ id: 'inprogress', name: $t('task.status.inprogress', { default: 'In Progress' }), items: [] as Task[] },
+			{ id: 'done', name: $t('task.status.done', { default: 'Done' }), items: [] as Task[] }
 		];
 		
 		for (const task of tasks) {
@@ -41,7 +36,7 @@
 
 	const flipDurationMs = 200;
 
-	function handleDndConsiderItems(cid: string, e: CustomEvent<{ items: TaskType[] }>) {
+	function handleDndConsiderItems(cid: string, e: CustomEvent<{ items: Task[] }>) {
 		const colIdx = columns.findIndex((c) => c.id === cid);
 		if (colIdx !== -1) {
 			// Create a new columns array to trigger reactivity
@@ -51,7 +46,7 @@
 		}
 	}
 
-	function handleDndFinalizeItems(cid: string, e: CustomEvent<{ items: TaskType[] }>) {
+	function handleDndFinalizeItems(cid: string, e: CustomEvent<{ items: Task[] }>) {
 		const colIdx = columns.findIndex((c) => c.id === cid);
 		if (colIdx !== -1) {
 			// Update the column with new items
@@ -68,16 +63,13 @@
 						TaskStatus.DONE
 				}))
 			);
-			
-			// Dispatch the updated tasks to parent component
-			dispatch('tasksUpdated', updatedTasks);
 		}
 	}
 </script>
 
-<section class="h-full w-full mb-10 flex gap-2">
+<section class="h-full w-full flex gap-2">
 	{#each columns as column (column.id)}
-		<div class="h-full grow border rounded-md overflow-y-hidden flex flex-col">
+		<div class="grow border rounded-md overflow-y-hidden flex flex-col">
 			<div class="justify-center items-center py-2 flex border-b">
 				<p class="text-lg font-medium">{column.name}</p>
 			</div>

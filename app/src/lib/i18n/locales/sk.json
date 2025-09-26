@@ -19,10 +19,7 @@
     "projects": "Projekty",
     "contact": "Kontakt"
   },
-  "footer": {
-    "text": "Vytvoril so ❤️ Martin Kollár"
-  },
-  "options": {
+  "actions": {
     "edit": "Upraviť",
     "delete": "Odstrániť",
     "create": "Vytvoriť",
@@ -38,10 +35,17 @@
       "inprogress": "Prebieha",
       "done": "Dokončené"
     },
-    "options": {
-      "create": "Vytvoriť úlohu",
-      "edit": "Upraviť úlohu",
-      "delete": "Odstrániť úlohu"
+    "actions": {
+      "create": {
+        "title": "Vytvoriť úlohu"
+      },
+      "edit": {
+        "title": "Upraviť úlohu"
+      },
+      "delete": {
+        "warning": "Naozaj chcete túto úlohu odstrániť? Túto akciu nie je možné vrátiť späť.",
+        "title": "Odstrániť úlohu"
+      }
     }
   }
 }

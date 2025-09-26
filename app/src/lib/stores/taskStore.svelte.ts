@@ -6,7 +6,7 @@ interface ITaskStore {
 	tasks: Task[];
 	isLoading: boolean;
 	fetchTask: () => Promise<void>;
-	createTask: (task: Task) => void;
+	createTask: (formData: FormData) => void;
 	updateTask: (updatedTask: Task) => void;
 	deleteTask: (taskId: string) => void;
 }
@@ -23,7 +23,7 @@ class TaskStore implements ITaskStore {
 
 	async fetchTask(): Promise<void> {
 		try {
-			const response = await fetchServer('/api/tasks', { method: 'GET' });
+			const response = await fetchServer('/api/tasks/', { method: 'GET' });
 			if (response.ok) {
 				const tasks = await response.json();
 				this.tasks = tasks.map((task: TaskDB) => ({
@@ -36,24 +36,28 @@ class TaskStore implements ITaskStore {
 		}
 	}
 
-	async createTask(task: Task): Promise<void> {
+	async createTask(formData: FormData): Promise<void> {
 		try {
-			const response = await fetchServer('/api/tasks', {
+			const response = await fetchServer('/api/tasks/', {
 				method: 'POST',
-				body: JSON.stringify(task)
+				body: formData
 			});
+
 			if (response.ok) {
 				const tasks = await response.json();
 				this.tasks = tasks;
+			} else {
+				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 		} catch (error) {
-			console.error('Failed to fetch tasks:', error);
+			console.error('Failed to create task with image:', error);
+			throw error;
 		}
 	}
 
 	async updateTask(updatedTask: Task): Promise<void> {
 		try {
-			const response = await fetchServer('/api/tasks', {
+			const response = await fetchServer('/api/tasks/', {
 				method: 'PUT',
 				body: JSON.stringify(updatedTask)
 			});
@@ -68,7 +72,7 @@ class TaskStore implements ITaskStore {
 
 	async deleteTask(taskId: string): Promise<void> {
 		try {
-			const response = await fetchServer('/api/tasks', {
+			const response = await fetchServer('/api/tasks/', {
 				method: 'DELETE',
 				body: JSON.stringify({ id: taskId })
 			});

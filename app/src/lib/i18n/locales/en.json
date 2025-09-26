@@ -19,10 +19,7 @@
     "projects": "Projects",
     "contact": "Contact"
   },
-  "footer": {
-    "text": "Made with ❤️ by Martin Kollár"
-  },
-  "options": {
+  "actions": {
     "edit": "Edit",
     "delete": "Delete",
     "create": "Create",
@@ -38,10 +35,17 @@
       "inprogress": "In Progress",
       "done": "Done"
     },
-    "options": {
-      "create": "Create task",
-      "edit": "Edit task",
-      "delete": "Delete task"
+    "actions": {
+      "create": {
+        "title": "Create task"
+      },
+      "edit": {
+        "title": "Edit task"
+      },
+      "delete": {
+        "warning": "Are you sure you want to delete this task? This action cannot be undone.",
+        "title": "Delete task"
+      }
     }
   }
 }
