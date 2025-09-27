@@ -4,8 +4,13 @@
 	import '$lib/i18n';
 	import favicon from '$lib/assets/favicon.svg';
 	import { setTaskStore } from '$lib/stores/taskStore.svelte';
+	import { onMount } from 'svelte';
 
-	setTaskStore();
+	const taskStore = setTaskStore();
+    
+    onMount(async () => {
+        await taskStore.initialize();
+    });
 
 	let { children } = $props();
 </script>

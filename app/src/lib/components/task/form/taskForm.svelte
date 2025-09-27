@@ -6,6 +6,7 @@
 	import { getTaskStore } from '$lib/stores/taskStore.svelte';
 	import { TaskStatus, type Task } from '$lib/types/task';
 	import * as Form from 'formsnap';
+	import { t } from 'svelte-i18n';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 
@@ -13,16 +14,19 @@
 
 	let {
 		data = { id: '', title: '', description: '', due_date: new Date(), status: TaskStatus.TODO },
+		action = "create",
 		submitForm = $bindable(),
 		onSubmit = $bindable()
 	}: {
-		data: Task;
+		data?: Task;
+		action?: "create" | "edit";
 		submitForm?: () => void;
 		onSubmit?: () => void;
 	} = $props();
 
 	const form = superForm(data, {
-		validators: zod4Client(taskSchema)
+		validators: zod4Client(taskSchema),
+		dataType: "json"
 	});
 
 	const { form: formData, enhance } = form;
@@ -65,7 +69,6 @@
 
 	async function handleSubmit() {
 		try {
-			debugger;
 			const formDataToSend = new FormData();
 
 			formDataToSend.append('title', $formData.title || '');
@@ -85,8 +88,13 @@
 			if (selectedImage) {
 				formDataToSend.append('photo', selectedImage);
 			}
+			
+			if (action === 'edit' && data?.id) {
+				await taskStore.updateTask(data.id, formDataToSend);
+			} else if (action === 'create') {
+				await taskStore.createTask(formDataToSend);
+			}
 
-			await taskStore.createTask(formDataToSend);
 			console.log('Submitting form with data:', Object.fromEntries(formDataToSend));
 
 			if (onSubmit) onSubmit();
@@ -107,22 +115,6 @@
 
 	submitForm = handleSubmit;
 
-	let formElement: HTMLFormElement;
-
-	function getStatusLabel(status?: TaskStatus): string {
-		switch (status) {
-			case TaskStatus.TODO:
-				return 'To Do';
-			case TaskStatus.IN_PROGRESS:
-				return 'In Progress';
-			case TaskStatus.DONE:
-				return 'Done';
-			default:
-				return 'Select status';
-		}
-	}
-
-	// Cleanup on destroy
 	$effect(() => {
 		return () => {
 			if (imagePreviewUrl) {
@@ -132,11 +124,11 @@
 	});
 </script>
 
-<form bind:this={formElement} method="POST" use:enhance>
+<form method="POST" use:enhance onsubmit={handleSubmit}>
 	<Form.Field {form} name="title">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Title</Form.Label>
+				<Form.Label>{$t('task.fields.title.title')}</Form.Label>
 				<Input {...props} type="text" bind:value={$formData.title} />
 			{/snippet}
 		</Form.Control>
@@ -146,7 +138,7 @@
 	<Form.Field {form} name="description">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Description</Form.Label>
+				<Form.Label>{$t('task.fields.description.title')}</Form.Label>
 				<Textarea {...props} bind:value={$formData.description} />
 			{/snippet}
 		</Form.Control>
@@ -156,7 +148,7 @@
 	<Form.Field {form} name="due_date">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Due Date</Form.Label>
+				<Form.Label>{$t('task.fields.due_date.title')}</Form.Label>
 				<Input {...props} type="date" bind:value={$formData.due_date} />
 			{/snippet}
 		</Form.Control>
@@ -166,17 +158,17 @@
 	<Form.Field {form} name="status">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Status</Form.Label>
+				<Form.Label>{$t('task.fields.status.title')}</Form.Label>
 				<Select.Root type="single" name="status" bind:value={$formData.status}>
 					<Select.Trigger class="w-[180px]">
-						{getStatusLabel($formData.status)}
+						{$t(`task.status.${$formData.status}`)}
 					</Select.Trigger>
 					<Select.Content>
 						<Select.Group>
-							<Select.Label>Status</Select.Label>
+							<Select.Label>{$t('task.fields.status.title')}</Select.Label>
 							{#each Object.values(TaskStatus) as status}
-								<Select.Item value={status} label={getStatusLabel(status)}>
-									{getStatusLabel(status)}
+								<Select.Item value={status} label={$t(`task.status.${status}`)}>
+									{$t(`task.status.${status}`)}
 								</Select.Item>
 							{/each}
 						</Select.Group>
@@ -193,7 +185,7 @@
 			for="photo"
 			class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
-			Photo (optional)
+			{$t('task.fields.photo.title')}
 		</label>
 
 		<div class="flex flex-col space-y-2">

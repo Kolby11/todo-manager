@@ -1,50 +1,49 @@
 <script lang="ts">
-	import { clsx } from 'clsx';
 	import * as Dialog from '$lib/components/ui/alert-dialog/index.js';
 	import TaskForm from './taskForm.svelte';
 	import { t } from 'svelte-i18n';
-	import type { Task } from '$lib/types/task';
 	import type { Snippet } from 'svelte';
+	import { getTaskActionDialogStore } from '$lib/stores/taskActionDialogStore.svelte';
+	import { getTaskStore } from '$lib/stores/taskStore.svelte';
 
 	type TaskActionDialogProps = {
-        task?: Task;
-        action: 'create' | 'edit' | 'delete';
-        children: Snippet;
+        children?: Snippet;
     };
 
-	let { task, action=$bindable(), children }: TaskActionDialogProps = $props();
-
-	let open = $state(false);
+	let { children }: TaskActionDialogProps = $props();
 
 	let submitTaskForm: (() => void) | undefined = $state();
 
-	let closeDialog = $state(() => {
-		if (open) open = false;
-	});
+	const taskStore = getTaskStore();
+	const taskActionDialogStore = getTaskActionDialogStore();
 
-	function handleCreateClick() {
-		if (submitTaskForm) {
+	async function handleDialogAction() {
+		if (taskActionDialogStore.action == 'delete') {
+			await taskStore.deleteTask(taskActionDialogStore.task?.id || '');
+			taskActionDialogStore.closeDialog();
+		}
+		else if (submitTaskForm) {
 			submitTaskForm();
 		}
 	}
 </script>
 
-<Dialog.Root bind:open>
+<Dialog.Root bind:open={taskActionDialogStore.isDialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{$t(`task.actions.${action}.title`)}</Dialog.Title>
+			<Dialog.Title>{$t(`task.actions.${taskActionDialogStore.action}.title`)}</Dialog.Title>
 		</Dialog.Header>
 		
-        {#if action !== 'delete'}
-            <TaskForm data={task} bind:submitForm={submitTaskForm} bind:onSubmit={closeDialog} />
+        {#if taskActionDialogStore.action !== 'delete'}
+            <TaskForm data={taskActionDialogStore.task} action={taskActionDialogStore.action} bind:submitForm={submitTaskForm} bind:onSubmit={taskActionDialogStore.closeDialog} />
         {:else}
-            <p class="text-center">{$t('task.actions.delete.warning')}</p>
+            <p class="text-center">{@html $t('task.actions.delete.warning')}</p>
 		{/if}
 
 		<Dialog.Footer>
 			<Dialog.Cancel>{$t('actions.cancel')}</Dialog.Cancel>
-			<Dialog.Action onclick={handleCreateClick}>
-				{$t(`actions.${action}`)}
+			<Dialog.Action type="submit" data-testid="submit-button" onclick={handleDialogAction}>
+				{$t(`actions.${taskActionDialogStore.action}`)}
 			</Dialog.Action>
 		</Dialog.Footer>
 	</Dialog.Content>

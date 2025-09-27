@@ -30,10 +30,32 @@
     "more_info": "Viac informácií"
   },
   "task": {
+    "fields": {
+      "title": {
+        "title": "Názov",
+        "placeholder": "Zadajte názov úlohy"
+      },
+      "description": {
+        "title": "Popis",
+        "placeholder": "Zadajte popis úlohy"
+      },
+      "due_date": {
+        "title": "Dátum splnenia",
+        "placeholder": "Vyberte dátum splnenia"
+      },
+      "status": {
+        "title": "Stav",
+        "placeholder": "Vyberte stav"
+      },
+      "photo": {
+        "title": "Fotografia",
+        "placeholder": "Nahrajte fotografiu"
+      }
+    },
     "status": {
-      "todo": "Na spracovanie",
-      "inprogress": "Prebieha",
-      "done": "Dokončené"
+      "TODO": "Na spracovanie",
+      "IN_PROGRESS": "Prebieha",
+      "DONE": "Dokončené"
     },
     "actions": {
       "create": {
@@ -43,7 +65,7 @@
         "title": "Upraviť úlohu"
       },
       "delete": {
-        "warning": "Naozaj chcete túto úlohu odstrániť? Túto akciu nie je možné vrátiť späť.",
+        "warning": "Naozaj chcete túto úlohu odstrániť? <br/ >Túto akciu nie je možné vrátiť späť.",
         "title": "Odstrániť úlohu"
       }
     }

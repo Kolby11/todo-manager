@@ -1,27 +1,30 @@
 import type { Task, TaskDB } from '$lib/types/task';
 import { fetchServer } from '$lib/utils/fetch';
-import { getContext, onMount, setContext } from 'svelte';
+import { getContext, setContext } from 'svelte';
 
 interface ITaskStore {
 	tasks: Task[];
 	isLoading: boolean;
-	fetchTask: () => Promise<void>;
+	fetchTasks: () => Promise<void>;
 	createTask: (formData: FormData) => void;
-	updateTask: (updatedTask: Task) => void;
+	updateTask: (taskId: string, formData: FormData) => void;
 	deleteTask: (taskId: string) => void;
+	initialize: () => Promise<void>;
 }
 
 class TaskStore implements ITaskStore {
 	tasks: Task[] = $state([]);
 	isLoading: boolean = $state(false);
+	private initialized = false;
 
-	constructor() {
-		onMount(() => {
-			this.fetchTask();
-		});
-	}
+    async initialize(): Promise<void> {
+        if (!this.initialized) {
+            await this.fetchTasks();
+            this.initialized = true;
+        }
+    }
 
-	async fetchTask(): Promise<void> {
+	async fetchTasks(): Promise<void> {
 		try {
 			const response = await fetchServer('/api/tasks/', { method: 'GET' });
 			if (response.ok) {
@@ -44,8 +47,8 @@ class TaskStore implements ITaskStore {
 			});
 
 			if (response.ok) {
-				const tasks = await response.json();
-				this.tasks = tasks;
+				const newTask = await response.json();
+				this.tasks.push({ ...newTask , due_date: newTask.due_date ? new Date(newTask.due_date) : null });
 			} else {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
@@ -55,30 +58,61 @@ class TaskStore implements ITaskStore {
 		}
 	}
 
-	async updateTask(updatedTask: Task): Promise<void> {
+	async updateTaskStatus(taskId: string, status: string): Promise<void> {
+		const formData = new FormData();
+		formData.append('status', status);
+
 		try {
-			const response = await fetchServer('/api/tasks/', {
-				method: 'PUT',
-				body: JSON.stringify(updatedTask)
+			const response = await fetchServer(`/api/tasks/${taskId}/`, {
+				method: 'PATCH',
+				body: formData
 			});
 			if (response.ok) {
-				const tasks = await response.json();
-				this.tasks = tasks;
+				const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+				const updatedTask = await response.json();
+				this.tasks[taskIndex] = { ...updatedTask, due_date: updatedTask.due_date ? new Date(updatedTask.due_date) : null };
 			}
 		} catch (error) {
-			console.error('Failed to fetch tasks:', error);
+			console.error('Failed to update task status:', error);
 		}
 	}
 
+	async updateTask(taskId: string, formData: FormData): Promise<void> {
+        try {
+            this.isLoading = true;
+            
+            if (!taskId) {
+                throw new Error('Task ID is required for update');
+            }
+
+            const response = await fetchServer(`/api/tasks/${taskId}/`, {
+                method: 'PUT',
+                body: formData
+            });
+            
+            if (response.ok) {
+				const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+				const updatedTask = await response.json();
+				this.tasks[taskIndex] = { ...updatedTask, due_date: updatedTask.due_date ? new Date(updatedTask.due_date) : null };
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Failed to update task:', error);
+            throw error;
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
 	async deleteTask(taskId: string): Promise<void> {
 		try {
-			const response = await fetchServer('/api/tasks/', {
+			const response = await fetchServer(`/api/tasks/${taskId}/`, {
 				method: 'DELETE',
 				body: JSON.stringify({ id: taskId })
 			});
 			if (response.ok) {
-				const tasks = await response.json();
-				this.tasks = tasks;
+				this.tasks = this.tasks.filter(task => task.id !== taskId);
 			}
 		} catch (error) {
 			console.error('Failed to fetch tasks:', error);
@@ -89,10 +123,10 @@ class TaskStore implements ITaskStore {
 const DEFAULT_KEY = 'default';
 
 export function getTaskStore(key = DEFAULT_KEY): TaskStore {
-	return getContext<TaskStore>(key);
+	return getContext<TaskStore>(`taskStore_${key}`);
 }
 
 export function setTaskStore(key = DEFAULT_KEY): TaskStore {
 	const store = new TaskStore();
-	return setContext<TaskStore>(key, store);
+	return setContext<TaskStore>(`taskStore_${key}`, store);
 }

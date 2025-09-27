@@ -12,7 +12,7 @@ export type Task = {
 	description?: string;
 	due_date: Date | null;
 	status?: TaskStatus;
-	photo_url?: string;
+	photo?: string;
 };
 
 export type TaskDB = {
@@ -20,5 +20,6 @@ export type TaskDB = {
 	title: string;
 	description: string;
 	due_date: string | null;
-	photo_url: string | null;
+	status: TaskStatus | null;
+	photo: string | null;
 };

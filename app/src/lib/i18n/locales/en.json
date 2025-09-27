@@ -30,10 +30,32 @@
     "more_info": "More info"
   },
   "task": {
+    "fields": {
+      "title": {
+        "title": "Title",
+        "placeholder": "Enter task title"
+      },
+      "description": {
+        "title": "Description",
+        "placeholder": "Enter task description"
+      },
+      "due_date": {
+        "title": "Due Date",
+        "placeholder": "Select due date"
+      },
+      "status": {
+        "title": "Status",
+        "placeholder": "Select status"
+      },
+      "photo": {
+        "title": "Photo",
+        "placeholder": "Upload photo"
+      }
+    },
     "status": {
-      "todo": "To Do",
-      "inprogress": "In Progress",
-      "done": "Done"
+      "TODO": "To Do",
+      "IN_PROGRESS": "In Progress",
+      "DONE": "Done"
     },
     "actions": {
       "create": {
@@ -43,7 +65,7 @@
         "title": "Edit task"
       },
       "delete": {
-        "warning": "Are you sure you want to delete this task? This action cannot be undone.",
+        "warning": "Are you sure you want to delete this task? <br/ >This action cannot be undone.",
         "title": "Delete task"
       }
     }
