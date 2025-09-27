@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Page } from '$lib/types/page';
+	import LanguageSelection from './languageSelection.svelte';
 	import ThemeSelection from './themeSelection.svelte';
 
 	type NavbarProps = {
@@ -18,7 +19,8 @@
 			<a href={page.href} class="text-foreground">{page.title}</a>
 		{/each}
 	</div> -->
-	<div class="ml-auto">
+	<div class="ml-auto flex items-center gap-x-4 justify-center">
+		<LanguageSelection />
 		<ThemeSelection />
 	</div>
 </nav>
