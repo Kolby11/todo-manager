@@ -1,5 +1,5 @@
 import type { Task, TaskDB } from '$lib/types/task';
-import { fetchServer } from '$lib/utils/fetch';
+import { fetchServer } from '$lib/utils/fetchServer';
 import { getContext, setContext } from 'svelte';
 
 interface ITaskStore {

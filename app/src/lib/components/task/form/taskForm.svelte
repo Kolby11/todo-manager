@@ -24,7 +24,6 @@
 	import { urlToFile } from '$lib/utils/urlToFile';
 	import { getTaskStatusColor } from '$lib/utils/getTaskStatusColor';
 
-	// Props
 	let {
 		data = { id: 0, title: '', description: '', due_date: new Date(), status: TaskStatus.TODO },
 		action = "create",
@@ -33,21 +32,18 @@
 	}: {
 		data?: Task;
 		action?: "create" | "edit";
-		submitForm?: () => void;
+		submitForm?: (fn: () => void) => void;
 		onSubmit?: () => void;
 	} = $props();
 
-	// Constants
 	const taskStore = getTaskStore();
 	const dateFormatter = new DateFormatter("en-US", { dateStyle: "long" });
 
-	// State
 	let formData: TaskWithFile = $state({ ...data, photo: undefined });
 	let imagePreviewUrl: string | null = $state(null);
 	let placeholder: DateValue = $state(today(getLocalTimeZone()));
 	let isLoadingPhoto = $state(false);
 
-	// Initialize form data and load existing photo if editing
 	$effect(() => {
 		if (action === 'edit' && data.photo && typeof data.photo === 'string') {
 			loadExistingPhoto();
@@ -56,7 +52,6 @@
 		}
 	});
 
-	// Set up superform
 	const form = superForm(formData, {
 		validators: zod4Client(taskFormSchema),
 		dataType: "form",
@@ -66,7 +61,6 @@
 
 	const { form: formDataProxy, enhance } = form;
 
-	// Functions
 	async function loadExistingPhoto() {
 		if (!data.photo || typeof data.photo !== 'string') return;
 		
@@ -140,7 +134,6 @@
 		cleanupImagePreview();
 		$formDataProxy.photo = undefined;
 		
-		// Clear file input
 		const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
 		if (fileInput) fileInput.value = '';
 	}
@@ -156,12 +149,10 @@
 		$formDataProxy.due_date = date?.toDate(getLocalTimeZone()) ?? null;
 	}
 
-	// Cleanup on destroy
 	$effect(() => {
 		return cleanupImagePreview;
 	});
 
-	// Expose submit function
 	submitForm = () => {
 		document.querySelector('form')?.requestSubmit();
 	};

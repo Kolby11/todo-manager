@@ -12,11 +12,7 @@
 	let { dueDate, taskStatus, ...rest }: DueDateProps = $props();
 
 	let formattedDate = $derived(
-		dueDate?.toLocaleDateString('sk-SK', {
-			month: '2-digit',
-			day: '2-digit',
-			year: 'numeric',
-		}) || ''
+		dueDate?.toDateString() || ''
 	);
 
 	let isOverdue = $derived(
