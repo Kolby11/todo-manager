@@ -33,7 +33,10 @@
     "fields": {
       "title": {
         "title": "Title",
-        "placeholder": "Enter task title"
+        "placeholder": "Enter task title",
+        "errors": {
+          "required": "Task title is required"
+        }
       },
       "description": {
         "title": "Description",
@@ -41,7 +44,10 @@
       },
       "due_date": {
         "title": "Due Date",
-        "placeholder": "Select due date"
+        "placeholder": "Select due date",
+        "errors": {
+          "due_date_in_past": "Due date cannot be in the past"
+        }
       },
       "status": {
         "title": "Status",
@@ -49,7 +55,10 @@
       },
       "photo": {
         "title": "Photo",
-        "placeholder": "Upload photo"
+        "placeholder": "Upload photo",
+        "errors": {
+          "invalid_image_type": "Only PNG and JPEG files are allowed"
+        }
       }
     },
     "status": {

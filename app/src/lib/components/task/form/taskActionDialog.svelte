@@ -18,9 +18,9 @@
 	const taskActionDialogStore = getTaskActionDialogStore();
 
 	async function handleDialogAction() {
-		if (taskActionDialogStore.action == 'delete') {
-			await taskStore.deleteTask(taskActionDialogStore.task?.id || '');
+		if (taskActionDialogStore.action == 'delete' && taskActionDialogStore.task?.id) {
 			taskActionDialogStore.closeDialog();
+			await taskStore.deleteTask(taskActionDialogStore.task?.id);
 		}
 		else if (submitTaskForm) {
 			submitTaskForm();
@@ -35,7 +35,7 @@
 		</Dialog.Header>
 		
         {#if taskActionDialogStore.action !== 'delete'}
-            <TaskForm data={taskActionDialogStore.task} action={taskActionDialogStore.action} bind:submitForm={submitTaskForm} bind:onSubmit={taskActionDialogStore.closeDialog} />
+            <TaskForm data={taskActionDialogStore.task} action={taskActionDialogStore.action} onSubmit={taskActionDialogStore.closeDialog} bind:submitForm={submitTaskForm}/>
         {:else}
             <p class="text-center">{@html $t('task.actions.delete.warning')}</p>
 		{/if}

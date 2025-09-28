@@ -28,9 +28,9 @@ class TaskActionDialogStore implements ITaskActionDialogStore {
     };
 
     closeDialog = () => {
+        this.isDialogOpen = false;
         this.task = undefined;
         this.action = 'create';
-        this.isDialogOpen = false;
     };
 }
 

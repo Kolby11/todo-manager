@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { locale, locales, t } from 'svelte-i18n'
-		import * as Select from '$lib/components/ui/select';
+	import * as Select from '$lib/components/ui/select';
 
 	function getLanguage() {
 		const loc = $locale;

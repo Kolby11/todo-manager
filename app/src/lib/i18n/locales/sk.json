@@ -33,7 +33,10 @@
     "fields": {
       "title": {
         "title": "Názov",
-        "placeholder": "Zadajte názov úlohy"
+        "placeholder": "Zadajte názov úlohy",
+        "errors": {
+          "required": "Názov úlohy je povinný"
+        }
       },
       "description": {
         "title": "Popis",
@@ -41,7 +44,10 @@
       },
       "due_date": {
         "title": "Dátum splnenia",
-        "placeholder": "Vyberte dátum splnenia"
+        "placeholder": "Vyberte dátum splnenia",
+        "errors": {
+          "due_date_in_past": "Dátum splnenia nemôže byť v minulosti"
+        }
       },
       "status": {
         "title": "Stav",
@@ -49,7 +55,10 @@
       },
       "photo": {
         "title": "Fotografia",
-        "placeholder": "Nahrajte fotografiu"
+        "placeholder": "Nahrajte fotografiu",
+        "errors": {
+          "invalid_image_type": "Iba PNG a JPEG súbory sú povolené"
+        }
       }
     },
     "status": {

@@ -7,8 +7,8 @@ interface ITaskStore {
 	isLoading: boolean;
 	fetchTasks: () => Promise<void>;
 	createTask: (formData: FormData) => void;
-	updateTask: (taskId: string, formData: FormData) => void;
-	deleteTask: (taskId: string) => void;
+	updateTask: (taskId: number, formData: FormData) => void;
+	deleteTask: (taskId: number) => void;
 	initialize: () => Promise<void>;
 }
 
@@ -58,7 +58,7 @@ class TaskStore implements ITaskStore {
 		}
 	}
 
-	async updateTaskStatus(taskId: string, status: string): Promise<void> {
+	async updateTaskStatus(taskId: number, status: string): Promise<void> {
 		const formData = new FormData();
 		formData.append('status', status);
 
@@ -77,7 +77,7 @@ class TaskStore implements ITaskStore {
 		}
 	}
 
-	async updateTask(taskId: string, formData: FormData): Promise<void> {
+	async updateTask(taskId: number, formData: FormData): Promise<void> {
         try {
             this.isLoading = true;
             
@@ -105,7 +105,7 @@ class TaskStore implements ITaskStore {
         }
     }
 
-	async deleteTask(taskId: string): Promise<void> {
+	async deleteTask(taskId: number): Promise<void> {
 		try {
 			const response = await fetchServer(`/api/tasks/${taskId}/`, {
 				method: 'DELETE',

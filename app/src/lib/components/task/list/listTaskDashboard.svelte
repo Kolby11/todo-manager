@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ListTaskItem from '$lib/components/task/list/listTaskItem.svelte';
-	import type { Task } from '$lib/types/task';
+	import { TaskStatus, type Task } from '$lib/types/task';
 
 	type ListTaskDashboardProps = {
 		tasks: Task[];
@@ -9,6 +9,14 @@
 	let { tasks = [] }: ListTaskDashboardProps = $props();
 
 	let sortedTasks = $derived([...tasks].sort((a, b) => {
+		// First, sort by status (non-DONE tasks first)
+		const isDoneA = a.status === TaskStatus.DONE;
+		const isDoneB = b.status === TaskStatus.DONE;
+		
+		if (isDoneA && !isDoneB) return 1;
+		if (!isDoneA && isDoneB) return -1;
+		
+		// Then sort by due date within each status group
 		if (!a.due_date && !b.due_date) return 0;
 		if (!a.due_date) return 1;
 		if (!b.due_date) return -1;

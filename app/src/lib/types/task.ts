@@ -7,7 +7,7 @@ export enum TaskStatus {
 }
 
 export type Task = {
-	id: string;
+	id: number;
 	title: string;
 	description?: string;
 	due_date: Date | null;
@@ -15,8 +15,12 @@ export type Task = {
 	photo?: string;
 };
 
+export type TaskWithFile = Omit<Task, "photo"> & {
+	photo?: File
+}
+
 export type TaskDB = {
-	id: string;
+	id: number;
 	title: string;
 	description: string;
 	due_date: string | null;
