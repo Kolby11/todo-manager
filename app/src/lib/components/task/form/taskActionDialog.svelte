@@ -19,8 +19,8 @@
 
 	async function handleDialogAction() {
 		if (taskActionDialogStore.action == 'delete' && taskActionDialogStore.task?.id) {
-			taskActionDialogStore.closeDialog();
 			await taskStore.deleteTask(taskActionDialogStore.task?.id);
+			taskActionDialogStore.closeDialog();
 		}
 		else if (submitTaskForm) {
 			submitTaskForm();
@@ -42,7 +42,7 @@
 
 		<Dialog.Footer>
 			<Dialog.Cancel>{$t('actions.cancel')}</Dialog.Cancel>
-			<Dialog.Action type="submit" data-testid="submit-button" onclick={handleDialogAction}>
+			<Dialog.Action type="submit" onclick={handleDialogAction}>
 				{$t(`actions.${taskActionDialogStore.action}`)}
 			</Dialog.Action>
 		</Dialog.Footer>

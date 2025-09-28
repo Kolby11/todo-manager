@@ -39,7 +39,7 @@
 	const taskStore = getTaskStore();
 	const dateFormatter = new DateFormatter("en-US", { dateStyle: "long" });
 
-	let formData: TaskWithFile = $state({ ...data, photo: undefined });
+	let formData: TaskWithFile = { ...data, photo: undefined }
 	let imagePreviewUrl: string | null = $state(null);
 	let placeholder: DateValue = $state(today(getLocalTimeZone()));
 	let isLoadingPhoto = $state(false);
@@ -146,7 +146,7 @@
 	}
 
 	function handleDateChange(date: DateValue | undefined) {
-		$formDataProxy.due_date = date?.toDate(getLocalTimeZone()) ?? null;
+		$formDataProxy.due_date = date?.toDate("UTC") ?? null;
 	}
 
 	$effect(() => {
