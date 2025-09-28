@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { TaskStatus, type Task } from '$lib/types/task';
-	import { Trash as TrashIcon, Pencil as PencilIcon, Calendar } from '@lucide/svelte';
+	import { Trash as TrashIcon, Pencil as PencilIcon } from '@lucide/svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { getTaskActionDialogStore } from '$lib/stores/taskActionDialogStore.svelte';
 	import TaskStatusBadge from './taskStatusBadge.svelte';
+	import DueDate from '../dueDate.svelte';
 
 	type ListTaskItemProps = {
 		task: Task;
@@ -13,18 +14,6 @@
 	let { task, ...rest }: ListTaskItemProps = $props();
 
 	let taskActionDialogStore = getTaskActionDialogStore();
-
-	let formattedDate = $derived(
-		task.due_date?.toLocaleDateString('sk-SK', {
-			month: '2-digit',
-			day: '2-digit',
-			year: 'numeric',
-		}) || ''
-	);
-
-	let isOverdue = $derived(
-		task.due_date && task.status !== TaskStatus.DONE && new Date() > task.due_date
-	);
 </script>
 
 <div class="group relative flex gap-x-2 rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-border/80" {...rest}>
@@ -77,16 +66,7 @@
 		{/if}
 
 		{#if task.due_date}
-			<div class="flex items-center gap-1.5 text-xs text-muted-foreground">
-				<Calendar class="w-3.5 h-3.5" />
-				<span class={isOverdue ? 'text-destructive font-medium' : ''}>
-					{#if isOverdue}
-						Overdue: {formattedDate}
-					{:else}
-						Due: {formattedDate}
-					{/if}
-				</span>
-			</div>
+			<DueDate dueDate={task.due_date} taskStatus={task.status}/>
 		{/if}
 	</div>
 </div>

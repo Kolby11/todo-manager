@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { TaskStatus, type Task } from '$lib/types/task';
-	import { Trash as TrashIcon, Pencil as PencilIcon, Calendar } from '@lucide/svelte';
-	import { buttonVariants } from '../../ui/button';
+	import { Trash as TrashIcon, Pencil as PencilIcon } from '@lucide/svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { getTaskActionDialogStore } from '$lib/stores/taskActionDialogStore.svelte';
+	import DueDate from '../dueDate.svelte';
 
 	type KanbanTaskItemProps = {
 		task: Task;
@@ -13,18 +13,6 @@
 	let { task, ...rest }: KanbanTaskItemProps = $props();
 
 	let taskActionDialogStore = getTaskActionDialogStore();
-
-	let formattedDate = $derived(
-		task.due_date?.toLocaleDateString('sk-SK', {
-			month: '2-digit',
-			day: '2-digit',
-			year: 'numeric',
-		}) || ''
-	);
-
-	let isOverdue = $derived(
-		task.due_date && task.status !== TaskStatus.DONE && new Date() > task.due_date
-	);
 </script>
 
 <div class="group flex gap-x-2 relative rounded-lg border border-border bg-card p-3 shadow-sm transition-all hover:shadow-md hover:border-border/80 cursor-pointer" {...rest}>
@@ -74,16 +62,7 @@
 		{/if}
 
 		{#if task.due_date}
-			<div class="flex items-center gap-1.5 text-xs text-muted-foreground pt-2 border-t border-border/50">
-				<Calendar class="w-3 h-3" />
-				<span class={isOverdue ? 'text-destructive font-medium' : ''}>
-					{#if isOverdue}
-						Overdue: {formattedDate}
-					{:else}
-						{formattedDate}
-					{/if}
-				</span>
-			</div>
+			<DueDate dueDate={task.due_date} taskStatus={task.status}/>
 		{/if}
 	</div>
 </div>

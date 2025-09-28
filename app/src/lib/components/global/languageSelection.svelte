@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { locale, locales, t } from 'svelte-i18n'
-	import * as Select from '$lib/components/ui/select';
+	import { locale, locales, t } from 'svelte-i18n'
+		import * as Select from '$lib/components/ui/select';
 
-  function getLanguage() {
-    const loc = $locale;
-    if (!loc) {
-      locale.set('en')
-    }
-    return loc || 'en';
-  }
+	function getLanguage() {
+		const loc = $locale;
+		if (!loc) {
+		locale.set('en')
+		}
+		return loc || 'en';
+	}
 
-  function setLanguage(language: string) {
-    locale.set(language)
-  }
+	function setLanguage(language: string) {
+		locale.set(language)
+	}
 </script>
 
 <Select.Root type="single" bind:value={getLanguage, setLanguage}>

@@ -57,6 +57,10 @@
       "IN_PROGRESS": "In Progress",
       "DONE": "Done"
     },
+    "due_date": {
+      "overdue": "Overdue",
+      "due_soon": "Due soon"
+    },
     "actions": {
       "create": {
         "title": "Create task"

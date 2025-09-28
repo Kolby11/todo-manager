@@ -57,6 +57,10 @@
       "IN_PROGRESS": "Prebieha",
       "DONE": "Dokončené"
     },
+    "due_date": {
+      "overdue": "Po termíne",
+      "due_soon": "Blíži sa termín"
+    },
     "actions": {
       "create": {
         "title": "Vytvoriť úlohu"
